@@ -1,15 +1,46 @@
 require('dotenv').config();
-var Twitter = require('twitter');
+var Twitter = require('twitter-v2');
 
-var client = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-});
+async function main() {
+  const client = new Twitter({
+    bearer_token: process.env.TWITTER_BEARER_TOKEN
+  });
 
-client.get('search/tweets', { q: 'ricardo fort', count: 10 }, function (error, tweets) {
-  if (error) throw error;
-  
-  console.log(tweets.statuses.map(s => s.text));
-});
+  const { data: tweets, meta, errors } = await client.get(
+    'tweets/search/recent',
+    {
+      query: 'ricardo fort',
+      max_results: 100,
+      tweet: {
+        fields: [
+          'created_at',
+          'entities',
+          'in_reply_to_user_id',
+          'public_metrics',
+          'referenced_tweets',
+          'source',
+          'author_id',
+        ],
+      },
+    }
+  );
+
+  if (errors) {
+    console.log('Errors:', errors);
+    return;
+  }
+  console.log("\ntweets: \n");
+
+  tweets.forEach((tweet, index) => {
+    console.log(`${index + 1}) ${tweet.text}`);
+  });
+  console.log("\nmeta: \n");
+  console.log(meta);
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
