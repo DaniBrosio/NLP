@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node index.js --service=$npm_config_service --query=$npm_config_query",
-    "twitter": "npm run start --service=twitter --query=$npm_config_query",
+    "twitter": "npm start --service=twitter --query=ADA",
+    "reddit": "npm start --service=reddit --query=hold",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

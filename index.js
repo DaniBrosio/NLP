@@ -8,13 +8,12 @@ import { TWITTER, REDDIT } from './helpers/constants.js';
 dotenv.config();
 
 const args = Yargs(process.argv.slice(2))
+  .alias('q', 'query')
+  .demandOption('q')
+  .default('q', 'rikar2')
+  .describe('q', 'search field')
+  .string('query')
   .argv;
-// .alias('q', 'query')
-// .demandOption('q')
-// .default('q', 'rikar2')
-// .describe('q', 'search field')
-// .string('query')
-// .argv;
 
 console.log(args.service);
 
@@ -58,8 +57,8 @@ const getFromReddit = async ({ query, client }) => {
   const commentsPromises = postIds.map(id => client.getSubmission(id).expandReplies({ limit: 100, depth: 0 }))
   const comments = await Promise.all(commentsPromises);
 
-  const bodies = comments[0].comments.filter(c => c.body.includes('hold')).map((comment, index) => `${index + 1}) ${comment.body}`);
-  
+  const bodies = comments[0].comments.filter(c => c.body.includes(query)).map((comment, index) => `${index + 1}) ${comment.body}`);
+
   console.log("\ncomments:");
   console.log(bodies);
 
