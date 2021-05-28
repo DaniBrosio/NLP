@@ -1,15 +1,24 @@
-require('dotenv').config();
-var Twitter = require('twitter-v2');
+import dotenv from 'dotenv';
+import Yargs from 'yargs';
+import Twitter from 'twitter-v2';
 
-async function main() {
-  const client = new Twitter({
-    bearer_token: process.env.TWITTER_BEARER_TOKEN
-  });
+dotenv.config();
 
+const args = Yargs(process.argv.slice(2))
+  .alias('q', 'query')
+  .demandOption('q')
+  .default('q', 'rikar2')
+  .describe('q', 'search field')
+  .string('query')
+  .argv;
+
+console.log(args);
+
+const main = async ({ query, client = Twitter }) => {
   const { data: tweets, meta, errors } = await client.get(
     'tweets/search/recent',
     {
-      query: 'ricardo fort',
+      query: query,
       max_results: 100,
       tweet: {
         fields: [
@@ -29,18 +38,30 @@ async function main() {
     console.log('Errors:', errors);
     return;
   }
-  console.log("\ntweets: \n");
+  console.log("\ntweets:");
 
   tweets.forEach((tweet, index) => {
     console.log(`${index + 1}) ${tweet.text}`);
   });
-  console.log("\nmeta: \n");
+  console.log("\nmeta:");
   console.log(meta);
 }
 
-if (require.main === module) {
-  main().catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+const getClient = () => {
+  switch (args.service) {
+    case 'twitter': return new Twitter({
+      bearer_token: process.env.TWITTER_BEARER_TOKEN
+    });
+    default: return new Twitter({
+      bearer_token: process.env.TWITTER_BEARER_TOKEN
+    });
+  }
 }
+
+const getQuery = () => args.query.length ? args.query : undefined;
+
+
+main({
+  query: getQuery(),
+  client: getClient()
+}).catch(err => console.error(err));
