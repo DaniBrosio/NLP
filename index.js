@@ -3,22 +3,37 @@ import dotenv from 'dotenv';
 import Yargs from 'yargs';
 import Twitter from 'twitter-v2';
 import Snoowrap from 'snoowrap';
+import MongoDB from 'mongodb';
 import { TWITTER, REDDIT } from './helpers/constants.js';
 
 dotenv.config();
 
+// arguments
 const args = Yargs(process.argv.slice(2))
   .alias('q', 'query')
   .demandOption('q')
-  .default('q', 'rikar2')
+  .default('q', 'ricardo')
   .describe('q', 'search field')
   .string('query')
   .argv;
 
-console.log(args.service);
+// db
+const { MongoClient } = MongoDB;
+const uri = process.env.MONGO_DB_URI;
+const mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoClient.connect(async err => {
+  const docs = await mongoClient.db("rawdata").collection("batches").countDocuments();
+  console.log(docs)
+  // perform actions on the collection object
+  // mongoClient.close();
+});
 
+const storeNewBatch = batch => mongoClient.db("rawdata").collection("batches").insertOne(batch);
+
+// twitter
 const getFromTwitter = async ({ query, client }) => {
-  const { data: tweets, meta, errors } = await client.get(
+  console.log(`fetching tweets containint "${query}"...`);
+  const { data: tweets = [], meta, errors } = await client.get(
     'tweets/search/recent',
     {
       query: query,
@@ -37,10 +52,13 @@ const getFromTwitter = async ({ query, client }) => {
     }
   );
 
+  console.log(`fetched ${tweets.length} tweets`);
+
   if (errors) {
     console.error('Errors:', errors);
     return;
   }
+
   console.log("\ntweets:");
 
   tweets.forEach((tweet, index) => {
@@ -48,8 +66,22 @@ const getFromTwitter = async ({ query, client }) => {
   });
   console.log("\nmeta:");
   console.log(meta);
+
+  mongoClient.connect(err => {
+    if (err) throw err;
+
+    storeNewBatch({ source: args.service, tweets, meta: { ...meta, query } })
+      .then(result => {
+        console.log(result);
+      });
+  });
 };
 
+const getTwitterClient = () => new Twitter({
+  bearer_token: process.env.TWITTER_BEARER_TOKEN
+});
+
+// reddit
 const getFromReddit = async ({ query, client }) => {
   const postIds = await client.getHot('wallstreetbets', { limit: 2 })
     .map(post => post.id);
@@ -67,10 +99,6 @@ const getFromReddit = async ({ query, client }) => {
   });
 };
 
-const getTwitterClient = () => new Twitter({
-  bearer_token: process.env.TWITTER_BEARER_TOKEN
-});
-
 const getRedditClient = () => new Snoowrap({
   userAgent: process.env.REDDIT_USER_AGENT,
   clientId: process.env.REDDIT_CLIENT_ID,
@@ -79,27 +107,26 @@ const getRedditClient = () => new Snoowrap({
   password: process.env.REDDIT_PASSWORD,
 });
 
+// main
 const query = args.query?.length ? args.query : undefined;
 
-const main = () => {
+(() => {
   switch (args.service) {
     case TWITTER: {
-      getFromTwitter({
+      return getFromTwitter({
         query,
         client: getTwitterClient()
       }).catch(err => console.error(err));
-      return;
     }
     case REDDIT: {
-      getFromReddit({
+      return getFromReddit({
         query,
         client: getRedditClient()
       }).catch(err => console.error(err));
-      return;
+    }
+    default: {
+      console.log('Main program not implemented yet. Please try running one of the commands specified in the README.md')
     }
   }
-};
-
-
-main();
+})();
 
