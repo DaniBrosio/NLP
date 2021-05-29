@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import Twitter from 'twitter-v2';
+// import { TWITTER } from '../helpers/constants';
 
 dotenv.config();
 
@@ -47,6 +48,13 @@ async function getTweets({ query, limit = 100 }) {
   //       console.log(result);
   //     });
   // });
+  return {
+    batch: {
+      source: 'TWITTER',
+      tweets,
+      meta: { ...meta, query }
+    }
+  };
 };
 
 function TwitterManager() {
@@ -55,6 +63,6 @@ function TwitterManager() {
   });
 };
 
-TwitterManager.prototype.getTweets = getTweets;
+TwitterManager.prototype.fetchPublicData = getTweets;
 
 export default TwitterManager;

@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
+import { response } from 'express';
 import Yargs from 'yargs';
-import MongoDB from 'mongodb';
 import { TWITTER, REDDIT } from './helpers/constants.js';
-import ScrapingApi from './services/index.js';
+import { ScrapingApi, DbApi } from './services/index.js';
 
 dotenv.config();
 const { twitterManager, redditManager } = new ScrapingApi();
+const { mongodbManager: dbManager } = new DbApi();
 
 // arguments
 const args = Yargs(process.argv.slice(2))
@@ -16,31 +17,27 @@ const args = Yargs(process.argv.slice(2))
   .string('query')
   .argv;
 
-// db
-const { MongoClient } = MongoDB;
-const uri = process.env.MONGO_DB_URI;
-const mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-mongoClient.connect(async err => {
-  const docs = await mongoClient.db("rawdata").collection("batches").countDocuments();
-  console.log(docs)
-  // perform actions on the collection object
-  // mongoClient.close();
-});
-
-const storeNewBatch = batch => mongoClient.db("rawdata").collection("batches").insertOne(batch);
-
 // main
+const fetchPublicData = async serviceManager => {
+  const { batch } = await serviceManager.fetchPublicData({ query });
+  dbManager.insertNewBatch(batch, response => {
+    console.log("dbResponse:", response);
+  });
+};
+
 const query = args.query?.length ? args.query : undefined;
+
+const getServiceManager = {
+  [TWITTER]: twitterManager,
+  [REDDIT]: redditManager
+};
 
 (() => {
   try {
-    switch (args.service) {
-      case TWITTER: return twitterManager.getTweets({ query })
-      case REDDIT: return redditManager.getComments({ query })
-      default: {
-        console.log('Main program not implemented yet. Please try running one of the commands specified in the README.md')
-      }
-    }
+    const serviceManager = getServiceManager[args.service];
+    if (!serviceManager) throw new Error('no service specified');
+
+    fetchPublicData(serviceManager);
   } catch (err) {
     console.error(err);
   }
