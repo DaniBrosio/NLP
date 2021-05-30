@@ -20,9 +20,8 @@ const args = Yargs(process.argv.slice(2))
 // main
 const fetchPublicData = async serviceManager => {
   const { batch } = await serviceManager.fetchPublicData({ query });
-  dbManager.insertNewBatch(batch, response => {
-    console.log("dbResponse:", response);
-  });
+  const { insertedCount } = await dbManager.insertNewBatch(batch);
+  console.log(`inserted ${insertedCount} documents`);
 };
 
 const query = args.query?.length ? args.query : undefined;
