@@ -1,110 +1,47 @@
-import fs from 'fs';
 import dotenv from 'dotenv';
 import Yargs from 'yargs';
-import Twitter from 'twitter-v2';
-import Snoowrap from 'snoowrap';
 import { TWITTER, REDDIT } from './helpers/constants.js';
-// import keywords from './keywords.json';
-
 import { readFile } from 'fs/promises';
-
+import { ScrapingApi, DbApi } from './services/index.js';
 
 dotenv.config();
 
+const { twitterManager, redditManager } = new ScrapingApi();
+const { mongodbManager: dbManager } = new DbApi();
+
+// arguments
 const args = Yargs(process.argv.slice(2))
   .alias('q', 'query')
   .demandOption('q')
-  .default('q', 'rikar2')
+  .default('q', 'ricardo')
   .describe('q', 'search field')
   .string('query')
   .argv;
 
-const getFromTwitter = async ({ query, client }) => {
-  const { data: tweets, meta, errors } = await client.get(
-    'tweets/search/recent',
-    {
-      query: query,
-      max_results: 100,
-      tweet: {
-        fields: [
-          'created_at',
-          'entities',
-          'in_reply_to_user_id',
-          'public_metrics',
-          'referenced_tweets',
-          'source',
-          'author_id',
-        ],
-      },
-    }
-  );
-
-  if (errors) {
-    console.error('Errors:', errors);
-    return;
-  }
-  console.log("\ntweets:");
-
-  tweets.forEach((tweet, index) => {
-    console.log(`${index + 1}) ${tweet.text}`);
-  });
-  console.log("\nmeta:");
-  console.log(meta);
+const fetchPublicData = async serviceManager => {
+  const { batch } = await serviceManager.fetchPublicData({ query });
+  const { insertedCount } = await dbManager.insertNewBatch(batch);
+  console.log(`inserted ${insertedCount} documents`);
 };
-
-const getFromReddit = async ({ query, client }) => {
-  const postIds = await client.getHot('wallstreetbets', { limit: 2 })
-    .map(post => post.id);
-
-  const commentsPromises = postIds.map(id => client.getSubmission(id).expandReplies({ limit: 100, depth: 0 }))
-  const comments = await Promise.all(commentsPromises);
-
-  const bodies = comments[0].comments.filter(c => c.body.includes(query)).map((comment, index) => `${index + 1}) ${comment.body}`);
-
-  console.log("\ncomments:");
-  console.log(bodies);
-
-  fs.writeFile('output.txt', JSON.stringify(bodies), () => {
-    console.log('archivo creado!')
-  });
-};
-
-const getTwitterClient = () => new Twitter({
-  bearer_token: process.env.TWITTER_BEARER_TOKEN
-});
-
-const getRedditClient = () => new Snoowrap({
-  userAgent: process.env.REDDIT_USER_AGENT,
-  clientId: process.env.REDDIT_CLIENT_ID,
-  clientSecret: process.env.REDDIT_CLIENT_SECRET,
-  username: process.env.REDDIT_USERNAME,
-  password: process.env.REDDIT_PASSWORD,
-});
 
 const query = args.query?.length ? args.query : undefined;
 
-const main = async () => {
-  const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
-  console.log(keywords);
-
-  switch (args.service) {
-    case TWITTER: {
-      getFromTwitter({
-        query,
-        client: getTwitterClient()
-      }).catch(err => console.error(err));
-      return;
-    }
-    case REDDIT: {
-      getFromReddit({
-        query,
-        client: getRedditClient()
-      }).catch(err => console.error(err));
-      return;
-    }
-  }
+const getServiceManager = {
+  [TWITTER]: twitterManager,
+  [REDDIT]: redditManager
 };
 
+(async () => {
+  try {
+    const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
+    console.log("keywords:\n",keywords);
 
-main();
+    const serviceManager = getServiceManager[args.service];
+    if (!serviceManager) throw new Error('no service specified');
+
+    fetchPublicData(serviceManager);
+  } catch (err) {
+    console.error(err);
+  }
+})();
 
