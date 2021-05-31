@@ -4,6 +4,10 @@ import Yargs from 'yargs';
 import Twitter from 'twitter-v2';
 import Snoowrap from 'snoowrap';
 import { TWITTER, REDDIT } from './helpers/constants.js';
+// import keywords from './keywords.json';
+
+import { readFile } from 'fs/promises';
+
 
 dotenv.config();
 
@@ -14,8 +18,6 @@ const args = Yargs(process.argv.slice(2))
   .describe('q', 'search field')
   .string('query')
   .argv;
-
-console.log(args.service);
 
 const getFromTwitter = async ({ query, client }) => {
   const { data: tweets, meta, errors } = await client.get(
@@ -81,7 +83,10 @@ const getRedditClient = () => new Snoowrap({
 
 const query = args.query?.length ? args.query : undefined;
 
-const main = () => {
+const main = async () => {
+  const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
+  console.log(keywords);
+
   switch (args.service) {
     case TWITTER: {
       getFromTwitter({

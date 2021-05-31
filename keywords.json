@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Bitcoin",
+    "acronym": "BTC",
+    "aliases": []
+  },
+  {
+    "name": "Ethereum",
+    "acronym": "ETH",
+    "aliases": []
+  },
+  {
+    "name": "Tether",
+    "acronym": "USDT",
+    "aliases": []
+  },
+  {
+    "name": "Cardano",
+    "acronym": "ADA",
+    "aliases": []
+  },
+  {
+    "name": "Binance Coin",
+    "acronym": "BNB",
+    "aliases": []
+  },
+  {
+    "name": "XRP",
+    "acronym": "XRP",
+    "aliases": []
+  },
+  {
+    "name": "Dogecoin",
+    "acronym": "DOGE",
+    "aliases": []
+  },
+  {
+    "name": "USD Coin",
+    "acronym": "USDC",
+    "aliases": []
+  },
+  {
+    "name": "Polkadot",
+    "acronym": "DOT",
+    "aliases": []
+  },
+  {
+    "name": "Uniswap",
+    "acronym": "UNI",
+    "aliases": []
+  },
+  {
+    "name": "Internet Computer",
+    "acronym": "ICP",
+    "aliases": []
+  },
+  {
+    "name": "Bitcoin Cash",
+    "acronym": "BCH",
+    "aliases": []
+  },
+  {
+    "name": "Chainlink",
+    "acronym": "LINK",
+    "aliases": []
+  },
+  {
+    "name": "Litecoin",
+    "acronym": "LTC",
+    "aliases": []
+  },
+  {
+    "name": "Polygon",
+    "acronym": "MATIC",
+    "aliases": []
+  },
+  {
+    "name": "Stellar",
+    "acronym": "XLM",
+    "aliases": []
+  },
+  {
+    "name": "Binance USD",
+    "acronym": "BUSD",
+    "aliases": []
+  },
+  {
+    "name": "Solana",
+    "acronym": "SOL",
+    "aliases": []
+  },
+  {
+    "name": "Ethereum classic",
+    "acronym": "ETC",
+    "aliases": []
+  },
+  {
+    "name": "VeChain",
+    "acronym": "VET",
+    "aliases": []
+  }
+]
