@@ -1,7 +1,7 @@
 
 import dotenv from 'dotenv';
-import fs from 'fs';
 import Snoowrap from 'snoowrap';
+import { REDDIT } from '../../helpers/constants.js';
 
 dotenv.config();
 
@@ -10,16 +10,16 @@ async function getComments({ query, limit = 2, repliesLimit = 100, repliesDpth =
     .map(post => post.id);
 
   const commentsPromises = postIds.map(id => this.client.getSubmission(id).expandReplies({ limit: repliesLimit, depth: repliesDpth }))
-  const comments = await Promise.all(commentsPromises);
+  const commentsFromAllPosts = await Promise.all(commentsPromises);
+  const bodies = commentsFromAllPosts.map(({ comments }, postIndex) => comments.filter(c => c.body.includes(query)).map((comment) => ({ postIndex, comment: comment.body })));
 
-  const bodies = comments[0].comments.filter(c => c.body.includes(query)).map((comment, index) => `${index + 1}) ${comment.body}`);
-
-  console.log("\ncomments:");
-  console.log(bodies);
-
-  fs.writeFile('output.txt', JSON.stringify(bodies), () => {
-    console.log('archivo creado!')
-  });
+  return {
+    batch: {
+      source: REDDIT,
+      comments: bodies,
+      meta: { postIds, query }
+    }
+  };
 };
 
 function RedditManager() {
@@ -32,6 +32,6 @@ function RedditManager() {
   });
 }
 
-RedditManager.prototype.getComments = getComments;
+RedditManager.prototype.fetchPublicData = getComments;
 
 export default RedditManager;
