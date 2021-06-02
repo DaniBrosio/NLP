@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import Twitter from 'twitter-v2';
-// import { TWITTER } from '../helpers/constants';
+import { TWITTER } from '../../helpers/constants.js';
 
 dotenv.config();
 
@@ -40,17 +40,9 @@ async function getTweets({ query, limit = 100 }) {
   console.log("\nmeta:");
   console.log(meta);
 
-  // mongoClient.connect(err => {
-  //   if (err) throw err;
-
-  //   storeNewBatch({ source: args.service, tweets, meta: { ...meta, query } })
-  //     .then(result => {
-  //       console.log(result);
-  //     });
-  // });
   return {
     batch: {
-      source: 'TWITTER',
+      source: TWITTER,
       tweets,
       meta: { ...meta, query }
     }

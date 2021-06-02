@@ -7,6 +7,7 @@
   "scripts": {
     "start": "nodemon index.js --service=$npm_config_service --query=$npm_config_query",
     "twitter": "nodemon index.js --service=twitter",
+    "bing": "nodemon index.js --service=bing",
     "reddit": "nodemon index.js --service=reddit --query=hold",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
