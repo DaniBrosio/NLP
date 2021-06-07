@@ -2,3 +2,4 @@
 export const TWITTER = 'twitter';
 export const REDDIT = 'reddit';
 export const BING = 'bing';
+export const GNEWS = 'gnews';
