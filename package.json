@@ -4,10 +4,15 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=v14.17.0"
+  },
+  "engineStrict": true,
   "scripts": {
     "start": "nodemon index.js --service=$npm_config_service --query=$npm_config_query",
     "twitter": "nodemon index.js --service=twitter",
     "bing": "nodemon index.js --service=bing",
+    "gnews": "nodemon index.js --service=gnews",
     "reddit": "nodemon index.js --service=reddit --query=hold",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -27,6 +32,7 @@
     "express": "^4.17.1",
     "minimist": "^1.2.5",
     "mongodb": "^3.6.9",
+    "node-fetch": "^2.6.1",
     "snoowrap": "^1.23.0",
     "twitter": "^1.7.1",
     "twitter-v2": "^1.1.0",

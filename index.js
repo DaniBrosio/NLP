@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
 import Yargs from 'yargs';
-import { TWITTER, REDDIT, BING } from './helpers/constants.js';
+import { TWITTER, REDDIT, BING, GNEWS } from './helpers/constants.js';
 import { readFile } from 'fs/promises';
 import { ScrapingApi, DbApi } from './services/index.js';
 
 dotenv.config();
 
-const { twitterManager, redditManager, bingManager } = new ScrapingApi();
+const { twitterManager, redditManager, bingManager, gnewsManager } = new ScrapingApi();
 const { mongodbManager: dbManager } = new DbApi();
 
 // arguments
@@ -31,7 +31,8 @@ const fetchPublicData = async serviceManager => {
 const getServiceManager = {
   [TWITTER]: twitterManager,
   [REDDIT]: redditManager,
-  [BING]: bingManager
+  [BING]: bingManager,
+  [GNEWS]: gnewsManager
 };
 
 (async () => {
