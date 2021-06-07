@@ -15,7 +15,7 @@ async function getNews({ query }) {
   console.log(query);
   const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&token=${GNEWS_API_KEY}`);
   const data = await response.json();
-  const coso = data.articles.map(article => fs.appendFile('news.md', `# ${article.title}\n${article.content}\n[link](${article.url})\n__________________________________\n`, () => console.log('finished')));
+  const coso = data.articles.map(article => fs.appendFile('output/news2.md', `# ${article.title}\n${article.content}\n[link](${article.url})\n__________________________________\n`, () => console.log('finished')));
 }
 
 function GnewsApi() { };
