@@ -22,10 +22,10 @@ const formatArticle = article =>
   [link](${article.url})\n
   __________________________________\n`;
 
-const appendArticlesToFile = articles => {
+const appendArticlesToFile = (articles, path = '/') => {
   console.log(`exporting ${articles.length} articles...`);
   articles.map(async (article, idx) => {
-    await appendContent(outputPath, formatArticle(article));
+    await appendContent(path, formatArticle(article));
     console.log(`exported article ${idx} to output/news.md`);
   });
 };
@@ -34,13 +34,12 @@ async function getNews({ query }) {
   console.log(query);
   const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&token=${GNEWS_API_KEY}`);
   const { articles, ...meta} = await response.json();
-  appendArticlesToFile(articles);
+  appendArticlesToFile(articles, outputPath);
   return {
     batch: {
       source: GNEWS,
       articles,
       meta: { ...meta, query }
-
     }
   }
 }
