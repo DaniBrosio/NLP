@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import https from 'https';
 import { BING } from '../../helpers/constants.js';
+import { appendToFile } from '../../helpers/files.js';
 
 dotenv.config();
 
@@ -20,7 +21,16 @@ if (!BING_CUSTOM_SEARCH_ENGINE_ID) {
 }
 // </TODO>
 
-function bingWebSearch(query) {
+const outputPath = 'output/bing.md';
+
+const formatResult = result =>
+  `# ${result.name}\n
+  #### *${result.datePublishedDisplayText}*
+  ${result.snippet}\n
+  [link](${result.url})\n
+  __________________________________\n`;
+
+function bingWebSearch({ query }) {
   return new Promise((resolve, reject) => {
     https.get({
       hostname: BING_CUSTOM_SEARCH_ENDPOINT,
@@ -32,6 +42,9 @@ function bingWebSearch(query) {
       res.on('end', () => {
         const { webPages, ...meta } = JSON.parse(body);
         const results = webPages?.value;
+
+        const formattedResults = results.map(formatResult);
+        appendToFile(outputPath, formattedResults);
 
         resolve({
           batch: {

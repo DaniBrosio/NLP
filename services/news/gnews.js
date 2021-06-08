@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
-import fs from 'fs';
 import fetch from 'node-fetch';
-import util from 'util';
 import { GNEWS } from '../../helpers/constants.js';
+import { appendToFile } from '../../helpers/files.js';
 
 dotenv.config();
 
@@ -14,27 +13,18 @@ if (!GNEWS_API_KEY) {
 
 const outputPath = 'output/news.md';
 
-const appendContent = util.promisify(fs.appendFile);
-
 const formatArticle = article =>
   `# ${article.title}\n
+  #### *${article.publishedAt}*\n
   ${article.content}\n
   [link](${article.url})\n
   __________________________________\n`;
 
-const appendArticlesToFile = (articles, path = '/') => {
-  console.log(`exporting ${articles.length} articles...`);
-  articles.map(async (article, idx) => {
-    await appendContent(path, formatArticle(article));
-    console.log(`exported article ${idx} to output/news.md`);
-  });
-};
-
 async function getNews({ query }) {
-  console.log(query);
   const response = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&token=${GNEWS_API_KEY}`);
   const { articles, ...meta} = await response.json();
-  appendArticlesToFile(articles, outputPath);
+  const formattedArticles = articles.map(formatArticle);
+  appendToFile(outputPath, formattedArticles);
   return {
     batch: {
       source: GNEWS,
