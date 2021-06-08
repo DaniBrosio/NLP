@@ -55,6 +55,6 @@ function TwitterManager() {
   });
 };
 
-TwitterManager.prototype.fetchPublicData = getTweets;
+TwitterManager.prototype.fetchServiceData = getTweets;
 
 export default TwitterManager;

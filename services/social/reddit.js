@@ -32,6 +32,6 @@ function RedditManager() {
   });
 }
 
-RedditManager.prototype.fetchPublicData = getComments;
+RedditManager.prototype.fetchServiceData = getComments;
 
 export default RedditManager;

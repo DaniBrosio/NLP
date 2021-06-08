@@ -51,6 +51,6 @@ function bingWebSearch(query) {
 
 function BingManager() { };
 
-BingManager.prototype.fetchPublicData = bingWebSearch;
+BingManager.prototype.fetchServiceData = bingWebSearch;
 
 export default BingManager;

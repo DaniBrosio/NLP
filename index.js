@@ -18,11 +18,11 @@ const args = Yargs(process.argv.slice(2))
   .string('query')
   .argv;
 
-const fetchPublicData = async serviceManager => {
+const fetchServiceData = async serviceManager => {
   const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
   const query = args.query?.length ? args.query : keywords[0].name;
 
-  const { batch } = await serviceManager.fetchPublicData({ query });
+  const { batch } = await serviceManager.fetchServiceData({ query });
   const { insertedCount } = await dbManager.insertNewBatch(batch);
   console.log(`inserted ${insertedCount} documents`);
 };
@@ -40,7 +40,7 @@ const getServiceManager = {
     const serviceManager = getServiceManager[args.service];
     if (!serviceManager) throw new Error('no service specified');
 
-    fetchPublicData(serviceManager);
+    fetchServiceData(serviceManager);
   } catch (err) {
     console.error(err);
   }
