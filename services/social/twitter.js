@@ -1,20 +1,23 @@
 import dotenv from 'dotenv';
 import Twitter from 'twitter-v2';
 import { TWITTER } from '../../helpers/constants.js';
+import { DateTime } from 'luxon';
 
 dotenv.config();
 
 async function getTweets({ crypto, limit = 100 }) {
   console.log(`fetching (max ${limit}) tweets talking about "${crypto.name}"...`);
-  const query = `${crypto.acronym}`;
+  const query = `${crypto.name} #${crypto.acronym} lang:en`;
+  const startTime = DateTime.now().minus({ minutes: 30 }).toISO();
   console.log(query)
+  console.log(startTime)
   const { data: tweets = [], meta, errors } = await this.client.get(
     'tweets/search/recent',
     {
       query,
       max_results: limit,
+      start_time: startTime,
       tweet: {
-        lang: 'en',
         fields: [
           'created_at',
           'entities',

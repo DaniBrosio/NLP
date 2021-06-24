@@ -48,6 +48,7 @@ const formatResults = async results => {
       // const paragraphs = Array.from(document.querySelectorAll("#story > section > div > div > p h2 h3"));
       // bloomberg -- BANNED
       // const paragraphs = Array.from(document.querySelectorAll("body > main > div.transporter-item.current > article > div > div.content-well-v2 > section > div.body-columns > div > div:nth-child(3) > div.body-copy-v2.fence-body > p"));
+      // coinpedia -- OK
       const paragraphs = Array.from(document.querySelectorAll("#the-post > div.entry-content.entry.clearfix > p"));
 
       const plainText = paragraphs.map((p, idx) => {
@@ -65,11 +66,12 @@ const formatResults = async results => {
   return scrapeResults.map((paragraphs, idx) => ({ text: paragraphs.join('. '), link: results[idx].url }));
 };
 
-function bingWebSearch({ query }) {
+function bingWebSearch({ crypto }) {
+  const query = crypto.name;
   return new Promise((resolve, reject) => {
     https.get({
       hostname: BING_CUSTOM_SEARCH_ENDPOINT,
-      path: `/v7.0/custom/search?q=${encodeURIComponent(query)}&customconfig=${BING_CUSTOM_SEARCH_ENGINE_ID}&mkt=en-US`,
+      path: `/v7.0/custom/search?q=${encodeURIComponent(query)}&customconfig=${BING_CUSTOM_SEARCH_ENGINE_ID}&mkt=en-US&freshness=day`,
       headers: { 'Ocp-Apim-Subscription-Key': BING_CUSTOM_SEARCH_API_KEY },
     }, res => {
       let body = '';
