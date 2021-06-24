@@ -4,14 +4,17 @@ import { TWITTER } from '../../helpers/constants.js';
 
 dotenv.config();
 
-async function getTweets({ query, limit = 100 }) {
-  console.log(`fetching (max ${limit - 1}) tweets containint "${query}"...`);
+async function getTweets({ crypto, limit = 100 }) {
+  console.log(`fetching (max ${limit}) tweets talking about "${crypto.name}"...`);
+  const query = `${crypto.acronym}`;
+  console.log(query)
   const { data: tweets = [], meta, errors } = await this.client.get(
     'tweets/search/recent',
     {
-      query: query,
+      query,
       max_results: limit,
       tweet: {
+        lang: 'en',
         fields: [
           'created_at',
           'entities',

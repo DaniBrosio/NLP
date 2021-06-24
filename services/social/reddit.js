@@ -28,6 +28,19 @@ async function getComments({ query, limit = 2, repliesLimit = 100, repliesDpth =
   };
 };
 
+async function getNewComments({ crypto, limit = 100 }) {
+  const comments = await this.client.getNewComments(crypto.subreddit, { amount: limit });
+  const parsedComments = Array.from(comments.map(({ body, ...meta }) => ({ text: body, meta })));
+
+  return {
+    batch: {
+      source: REDDIT,
+      results: parsedComments,
+      meta: { query: crypto }
+    }
+  };
+}
+
 function RedditManager() {
   this.client = new Snoowrap({
     userAgent: process.env.REDDIT_USER_AGENT,
@@ -37,9 +50,9 @@ function RedditManager() {
     password: process.env.REDDIT_PASSWORD,
   });
 
-  this.client.config({ continueAfterRatelimitError: true });
+  this.client.config({ requestDelay: 1000, continueAfterRatelimitError: true, warnings: true });
 }
 
-RedditManager.prototype.fetchServiceData = getComments;
+RedditManager.prototype.fetchServiceData = getNewComments;
 
 export default RedditManager;
