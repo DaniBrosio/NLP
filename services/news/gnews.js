@@ -28,7 +28,7 @@ async function getNews({ query }) {
   return {
     batch: {
       source: GNEWS,
-      articles,
+      results: articles,
       meta: { ...meta, query }
     }
   }
