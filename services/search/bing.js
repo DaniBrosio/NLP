@@ -42,9 +42,13 @@ const formatResults = async results => {
     page.on('console', msg => console.log(msg.text()));
 
     return page.evaluate(() => {
-      console.debug(`url is ${location.href}`);
+      console.log(`url is ${location.href}`);
 
-      const paragraphs = Array.from(document.querySelectorAll("#story > section > div > div > p h2 h3"));
+      // nyt -- BANNED
+      // const paragraphs = Array.from(document.querySelectorAll("#story > section > div > div > p h2 h3"));
+      // bloomberg -- BANNED
+      // const paragraphs = Array.from(document.querySelectorAll("body > main > div.transporter-item.current > article > div > div.content-well-v2 > section > div.body-columns > div > div:nth-child(3) > div.body-copy-v2.fence-body > p"));
+      const paragraphs = Array.from(document.querySelectorAll("#the-post > div.entry-content.entry.clearfix > p"));
 
       const plainText = paragraphs.map((p, idx) => {
         const text = p.innerHTML.replace(/<[^>]+>/g, '');
@@ -83,7 +87,7 @@ function bingWebSearch({ query }) {
 
         resolve({
           batch: {
-            source: BING,
+            source: 'coinpedia',
             results: formattedResults,
             meta: { ...meta, query }
           }

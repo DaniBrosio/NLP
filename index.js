@@ -24,8 +24,12 @@ const fetchServiceData = async serviceManager => {
 
   const { batch } = await serviceManager.fetchServiceData({ query });
 
-  const { insertedCount } = await dbManager.insertNewBatch(batch);
-  console.log(`inserted ${insertedCount} documents`);
+  try {
+    const { insertedCount } = await dbManager.insertNewBatch(batch);
+    console.log(`inserted ${insertedCount} documents`);
+  } catch (error) {
+    console.error('failed inserting batch', error);
+  }
 };
 
 const getServiceManager = {
