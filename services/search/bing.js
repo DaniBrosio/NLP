@@ -60,13 +60,9 @@ const formatResults = async results => {
   });
 
   const scrapeResults = await Promise.all(scrapeResultsPromises);
-
-  console.log("\n\n\n\n\n\nScrape Results:");
-  console.log(scrapeResults.map((text, idx) => ({ text, link: results[idx].url })));
-
   await browser.close();
 
-  return scrapeResults;
+  return scrapeResults.map((paragraphs, idx) => ({ text: paragraphs.join('. '), link: results[idx].url }));
 };
 
 function bingWebSearch({ query }) {
@@ -82,15 +78,15 @@ function bingWebSearch({ query }) {
         const { webPages, ...meta } = JSON.parse(body);
         const results = webPages?.value;
 
-        const formattedResults = formatResults(results);
-        // appendToFile(outputPath, formattedResults);
-
-        resolve({
-          batch: {
-            source: 'coinpedia',
-            results: formattedResults,
-            meta: { ...meta, query }
-          }
+        formatResults(results).then(formattedResults => {
+          // appendToFile(outputPath, formattedResults);
+          resolve({
+            batch: {
+              source: 'coinpedia',
+              results: formattedResults,
+              meta: { ...meta, query }
+            }
+          });
         });
       })
       res.on('error', e => {

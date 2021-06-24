@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
 import Yargs from 'yargs';
-import { TWITTER, REDDIT, BING, GNEWS } from './helpers/constants.js';
+import { HOSTED_URLS, TWITTER, REDDIT, BING, GNEWS } from './helpers/constants.js';
 import { readFile } from 'fs/promises';
 import { ScrapingApi, DbApi } from './services/index.js';
+import SentimentPredictor from './services/sentiment/sentiment.js';
 
 dotenv.config();
 
@@ -18,11 +19,29 @@ const args = Yargs(process.argv.slice(2))
   .string('query')
   .argv;
 
+/**
+ * Loads the pretrained model and metadata, and registers the predict
+ * function with the UI.
+ */
+async function setupSentiment() {
+  console.log('Model available: ' + HOSTED_URLS.model);
+  return new SentimentPredictor().init(HOSTED_URLS);
+}
+
 const fetchServiceData = async serviceManager => {
   const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
   const query = args.query?.length ? args.query : keywords[0].name;
 
   const { batch } = await serviceManager.fetchServiceData({ query });
+
+  try {
+    const predictor = await setupSentiment();
+    console.log("debugggiiiinnngg:   :::    :: ", batch.results);
+    const sentimentResults = batch.results.map(result => ({ rawSource: result, analysis: predictor.predict(result.text) }));
+    sentimentResults.map(r => console.log("\n\n[ANALYSIS]: ", r.analysis, "\n[RAW_SOURCE]: ", r.rawSource.text));
+  } catch (error) {
+    console.error('failed predicting', error);
+  }
 
   try {
     const { insertedCount } = await dbManager.insertNewBatch(batch);

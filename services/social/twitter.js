@@ -32,18 +32,18 @@ async function getTweets({ query, limit = 100 }) {
     return;
   }
 
-  console.log("\ntweets:");
+  // console.log("\ntweets:");
 
-  tweets.forEach((tweet, index) => {
-    console.log(`${index + 1}) ${tweet.text}`);
-  });
-  console.log("\nmeta:");
-  console.log(meta);
+  // tweets.forEach((tweet, index) => {
+  //   console.log(`${index + 1}) ${tweet.text}`);
+  // });
+  // console.log("\nmeta:");
+  // console.log(meta);
 
   return {
     batch: {
       source: TWITTER,
-      tweets,
+      results: tweets,
       meta: { ...meta, query }
     }
   };
