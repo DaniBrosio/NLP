@@ -28,28 +28,37 @@ async function setupSentiment() {
   return new SentimentPredictor().init(HOSTED_URLS);
 }
 
-const fetchServiceData = async serviceManager => {
-  const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
-  const query = args.query?.length ? args.query : keywords[0].name;
+const fetchServiceData = async (crypto, serviceManager) => {
+  const { batch } = await serviceManager.fetchServiceData({ crypto, limit: 10 });
 
-  const { batch } = await serviceManager.fetchServiceData({ query });
-
+  const analyzedBatch = await performSentimentAnalysis(batch);
+  console.log(JSON.stringify(analyzedBatch, null, 2));
   try {
-    const predictor = await setupSentiment();
-    console.log("debugggiiiinnngg:   :::    :: ", batch.results);
-    const sentimentResults = batch.results.map(result => ({ rawSource: result, analysis: predictor.predict(result.text) }));
-    sentimentResults.map(r => console.log("\n\n[ANALYSIS]: ", r.analysis, "\n[RAW_SOURCE]: ", r.rawSource.text));
-  } catch (error) {
-    console.error('failed predicting', error);
-  }
-
-  try {
-    const { insertedCount } = await dbManager.insertNewBatch(batch);
+    const { insertedCount } = await dbManager.insertNewBatch(analyzedBatch);
     console.log(`inserted ${insertedCount} documents`);
   } catch (error) {
     console.error('failed inserting batch', error);
   }
 };
+
+const performSentimentAnalysis = async ({ results, ...batch }) => {
+  try {
+    const predictor = await setupSentiment();
+    const analyzedBatch = {
+      ...batch,
+      results: results.map(
+        result => ({
+          ...batch,
+          rawSource: result.text,
+          analysis: predictor.predict(result.text)
+        }))
+    };
+    analyzedBatch.results.map(r => console.log("\n\n[ANALYSIS]: ", r.analysis, "\n[RAW_SOURCE]: ", r.rawSource));
+    return analyzedBatch;
+  } catch (error) {
+    console.error('failed predicting', error);
+  }
+}
 
 const getServiceManager = {
   [TWITTER]: twitterManager,
@@ -60,10 +69,12 @@ const getServiceManager = {
 
 (async () => {
   try {
+    const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
+
     const serviceManager = getServiceManager[args.service];
     if (!serviceManager) throw new Error('no service specified');
 
-    fetchServiceData(serviceManager);
+    fetchServiceData(keywords[3], serviceManager);
   } catch (err) {
     console.error(err);
   }
