@@ -33,6 +33,7 @@
     "minimist": "^1.2.5",
     "mongodb": "^3.6.9",
     "node-fetch": "^2.6.1",
+    "puppeteer": "^10.0.0",
     "snoowrap": "^1.23.0",
     "twitter": "^1.7.1",
     "twitter-v2": "^1.1.0",
