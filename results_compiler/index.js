@@ -1,46 +1,43 @@
-// Require library
+
+import dotenv from 'dotenv';
 import xl from 'excel4node';
- 
-// Create a new instance of a Workbook class
-var wb = new xl.Workbook();
- 
-// Add Worksheets to the workbook
-var ws = wb.addWorksheet('Sheet 1');
-var ws2 = wb.addWorksheet('Sheet 2');
- 
-// Create a reusable style
-var style = wb.createStyle({
+import MongodbManager from './services/db/mongodb.js';
+dotenv.config();
+
+const dbManager = new MongodbManager();
+const wb = new xl.Workbook();
+const style = wb.createStyle({
   font: {
-    color: '#FF0800',
+    // color: '#FF0800',
     size: 12,
   },
   numberFormat: '$#,##0.00; ($#,##0.00); -',
 });
- 
-// Set value of cell A1 to 100 as a number type styled with paramaters of style
-ws.cell(1, 1)
-  .number(100)
-  .style(style);
- 
-// Set value of cell B1 to 200 as a number type styled with paramaters of style
-ws.cell(1, 2)
-  .number(200)
-  .style(style);
- 
-// Set value of cell C1 to a formula styled with paramaters of style
-ws.cell(1, 3)
-  .formula('A1 + B1')
-  .style(style);
- 
-// Set value of cell A2 to 'string' styled with paramaters of style
-ws.cell(2, 1)
-  .string('string')
-  .style(style);
- 
-// Set value of cell A3 to true as a boolean type styled with paramaters of style but with an adjustment to the font size.
-ws.cell(3, 1)
-  .bool(true)
-  .style(style)
-  .style({font: {size: 14}});
- 
-wb.write('output/results.xlsx');
+
+const ws = wb.addWorksheet('Sheet 1');
+
+(async () => {
+  const cursor = await dbManager.getAvailableResults();
+  const results = await cursor.toArray();
+
+  results.map(async ({ _id: id, timeoutPrice, batchTimePrice, docId, state, ...rest }, resultIndex) => {
+    const shallowObject = { timeoutPriceUSD: timeoutPrice.USD, batchTimePriceUSD: batchTimePrice.USD, ...rest };
+    const keys = Object.keys(shallowObject);
+    console.log(shallowObject);
+    console.log(keys);
+    keys.map((key, index) => {
+      let xlCursor = ws.cell(1, index + 1);
+      xlCursor.string(key || '')
+        .style(style);
+      xlCursor = ws.cell(2 + resultIndex, index + 1);
+      if (!shallowObject[key]) return;
+      if (typeof shallowObject[key] === 'number') xlCursor.number(shallowObject[key] || 0).style(style);
+      else if (typeof shallowObject[key] === 'string') xlCursor.string(shallowObject[key] || '').style(style);
+
+    });
+    wb.write('output/results.xlsx');
+
+    console.log("byee")
+  });
+})();
+

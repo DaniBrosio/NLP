@@ -41,7 +41,6 @@ function setAsIgnored(_id) {
 }
 
 async function getCollection(name) {
-  // await this.client.connect();
   await this.connection;
   return this.client.db("sentiment-analysis").collection(name);
 }

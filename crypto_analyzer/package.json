@@ -9,11 +9,10 @@
   },
   "engineStrict": true,
   "scripts": {
-    "start": "nodemon index.js --service=$npm_config_service --query=$npm_config_query",
-    "twitter": "nodemon index.js --service=twitter --query=$npm_config_query",
-    "bing": "nodemon index.js --service=bing --query=$npm_config_query",
-    "gnews": "nodemon index.js --service=gnews --query=$npm_config_query",
-    "reddit": "nodemon index.js --service=reddit --query=$npm_config_query",
+    "start": "nodemon index.js --service=$npm_config_service --coin-index=$npm_config_coin_index",
+    "twitter": "nodemon index.js --service=twitter --coin-index=$npm_config_coin_index",
+    "bing": "nodemon index.js --service=bing --coin-index=$npm_config_coin_index",
+    "reddit": "nodemon index.js --service=reddit --coin-index=$npm_config_coin_index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

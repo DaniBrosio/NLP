@@ -33,7 +33,7 @@ const outputPath = 'output/bing.md';
 
 const formatResults = async results => {
   const browser = await puppeteer.launch({ headless: true });
-  const scrapeResultsPromises = results.map(async r => {
+  const scrapeResultsPromises = (results || []).map(async r => {
     const page = await browser.newPage();
     await page.goto(r.url, {
       waitUntil: 'domcontentloaded',

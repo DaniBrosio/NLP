@@ -14,11 +14,11 @@ const { mongodbManager: dbManager } = new DbApi();
 
 // arguments
 const args = Yargs(process.argv.slice(2))
-  .alias('q', 'query')
-  .demandOption('q')
-  .default('q', 'ricardo')
-  .describe('q', 'search field')
-  .string('query')
+  .alias('c', 'coin-index')
+  .demandOption('c')
+  .default('c', 0)
+  .describe('c', 'coin # 0-19')
+  .number('coin-index')
   .argv;
 
 /**
@@ -95,7 +95,7 @@ const getServiceManager = {
     const serviceManager = getServiceManager[args.service];
     if (!serviceManager) throw new Error('no service specified');
 
-    fetchServiceData(keywords[3], serviceManager);
+    fetchServiceData(keywords[args['coin-index']], serviceManager);
   } catch (err) {
     console.error(err);
   }
