@@ -8,7 +8,7 @@ const { MongoClient } = MongoDB;
 
 async function insertNewBatch(batch) {
   await this.client.connect();
-  return this.client.db("rawdata").collection("batches").insertOne(batch);
+  return this.client.db("sentiment-analysis").collection("batches").insertOne(batch);
 };
 
 function MongodbManager() {

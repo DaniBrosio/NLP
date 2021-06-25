@@ -48,6 +48,7 @@ async function getTweets({ crypto, limit = 100 }) {
 
   return {
     batch: {
+      coin: crypto.acronym,
       source: TWITTER,
       results: tweets,
       meta: { ...meta, query }

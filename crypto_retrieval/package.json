@@ -2,11 +2,20 @@
   "name": "crypto_retrieval",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "luxon": "^1.27.0",
+    "mongodb": "^3.6.9",
+    "promise": "^8.1.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
+  }
 }

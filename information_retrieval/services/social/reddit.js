@@ -34,6 +34,7 @@ async function getNewComments({ crypto, limit = 100 }) {
 
   return {
     batch: {
+      coin: crypto.acronym,
       source: REDDIT,
       results: parsedComments,
       meta: { query: crypto }

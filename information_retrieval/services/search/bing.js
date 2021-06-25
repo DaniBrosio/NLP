@@ -84,6 +84,7 @@ function bingWebSearch({ crypto }) {
           // appendToFile(outputPath, formattedResults);
           resolve({
             batch: {
+              coin: crypto.acronym,
               source: 'coinpedia',
               results: formattedResults,
               meta: { ...meta, query }
