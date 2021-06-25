@@ -1,7 +1,7 @@
 {
-  "name": "nlp-rikar2",
+  "name": "crypto_analyzer",
   "version": "1.0.0",
-  "description": "",
+  "description": "## Setup 1. install node (I'm using v14.17.0) 1. run `npm install`",
   "main": "index.js",
   "type": "module",
   "engines": {

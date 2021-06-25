@@ -1,7 +1,6 @@
 {
-  "name": "crypto_retrieval",
+  "name": "results_generator",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -17,5 +16,7 @@
     "promise": "^8.1.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
-  }
+  },
+  "devDependencies": {},
+  "description": ""
 }
