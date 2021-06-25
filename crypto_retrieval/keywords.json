@@ -1,0 +1,142 @@
+[
+  {
+    "key": "bitcoin",
+    "name": "Bitcoin",
+    "acronym": "BTC",
+    "aliases": [],
+    "subreddit": "Bitcoin"
+  },
+  {
+    "key": "ethereum",
+    "name": "Ethereum",
+    "acronym": "ETH",
+    "aliases": [],
+    "subreddit": "ethereum"
+  },
+  {
+    "key": "tether",
+    "name": "Tether",
+    "acronym": "USDT",
+    "aliases": [],
+    "subreddit": "Tether"
+  },
+  {
+    "key": "cardano",
+    "name": "Cardano",
+    "acronym": "ADA",
+    "aliases": [],
+    "subreddit": "cardano"
+  },
+  {
+    "key": "binancecoin",
+    "name": "Binance Coin",
+    "acronym": "BNB",
+    "aliases": [],
+    "subreddit": "binancecoin"
+  },
+  {
+    "key": "xrp",
+    "name": "XRP",
+    "acronym": "XRP",
+    "aliases": [],
+    "subreddit": "XRP"
+  },
+  {
+    "key": "doge",
+    "name": "Dogecoin",
+    "acronym": "DOGE",
+    "aliases": [],
+    "subreddit": "dogecoin"
+  },
+  {
+    "key": "usdcoin",
+    "name": "USD Coin",
+    "acronym": "USDC",
+    "aliases": [],
+    "subreddit": "usdcoin"
+  },
+  {
+    "key": "polkadot",
+    "name": "Polkadot",
+    "acronym": "DOT",
+    "aliases": [],
+    "subreddit": "Polkadot"
+  },
+  {
+    "key": "uniswap",
+    "name": "Uniswap",
+    "acronym": "UNI",
+    "aliases": [],
+    "subreddit": "Uniswap"
+  },
+  {
+    "key": "internetcomputer",
+    "name": "Internet Computer",
+    "acronym": "ICP",
+    "aliases": [],
+    "subreddit": "dfinity"
+  },
+  {
+    "key": "bitcoincash",
+    "name": "Bitcoin Cash",
+    "acronym": "BCH",
+    "aliases": [],
+    "subreddit": "Bitcoin cash"
+  },
+  {
+    "key": "chainlink",
+    "name": "Chainlink",
+    "acronym": "LINK",
+    "aliases": [],
+    "subreddit": "Chainlink"
+  },
+  {
+    "key": "litecoin",
+    "name": "Litecoin",
+    "acronym": "LTC",
+    "aliases": [],
+    "subreddit": "litecoin"
+  },
+  {
+    "key": "polygon",
+    "name": "Polygon",
+    "acronym": "MATIC",
+    "aliases": [],
+    "subreddit": "maticnetwork"
+  },
+  {
+    "key": "stellar",
+    "name": "Stellar",
+    "acronym": "XLM",
+    "aliases": [],
+    "subreddit": "Stellar"
+  },
+  {
+    "key": "binanceusd",
+    "name": "Binance USD",
+    "acronym": "BUSD",
+    "aliases": [],
+    "subreddit": "BinanceUSD"
+  },
+  {
+    "key": "solana",
+    "name": "Solana",
+    "acronym": "SOL",
+    "aliases": [],
+    "subreddit": "Solana"
+  },
+  {
+    "key": "ethereumclassic",
+    "name": "Ethereum classic",
+    "acronym": "ETC",
+    "aliases": [],
+    "subreddit": "EthereumClassic"
+  },
+  {
+    "key": "vechain",
+    "name": "VeChain",
+    "acronym": "VET",
+    "aliases": [],
+    "subreddit": "Vechain"
+  }
+]

@@ -1,0 +1,48 @@
+{
+  "name": "nlp-rikar2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=v14.17.0"
+  },
+  "engineStrict": true,
+  "scripts": {
+    "start": "nodemon index.js --service=$npm_config_service --query=$npm_config_query",
+    "twitter": "nodemon index.js --service=twitter --query=$npm_config_query",
+    "bing": "nodemon index.js --service=bing --query=$npm_config_query",
+    "gnews": "nodemon index.js --service=gnews --query=$npm_config_query",
+    "reddit": "nodemon index.js --service=reddit --query=$npm_config_query",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DankyB/NLP.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DankyB/NLP/issues"
+  },
+  "homepage": "https://github.com/DankyB/NLP#readme",
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^3.7.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "luxon": "^1.27.0",
+    "minimist": "^1.2.5",
+    "mongodb": "^3.6.9",
+    "node-fetch": "^2.6.1",
+    "present": "^1.0.0",
+    "puppeteer": "^10.0.0",
+    "snoowrap": "^1.23.0",
+    "twitter": "^1.7.1",
+    "twitter-v2": "^1.1.0",
+    "yargs": "^17.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
