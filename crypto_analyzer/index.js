@@ -31,10 +31,10 @@ const setupSentiment = async () => {
 };
 
 const fetchServiceData = async (crypto, serviceManager) => {
-  const { batch } = await serviceManager.fetchServiceData({ crypto, limit: 10 });
+  const { batch } = await serviceManager.fetchServiceData({ crypto });
 
   const analyzedBatch = await performSentimentAnalysis(batch);
-  console.log(JSON.stringify(analyzedBatch, null, 2));
+  // console.log(JSON.stringify(analyzedBatch, null, 2));
   try {
     const { insertedCount } = await dbManager.insertNewBatch(analyzedBatch);
     console.log(`inserted ${insertedCount} documents`);
@@ -64,6 +64,7 @@ const performSentimentAnalysis = async ({ results, ...batch }) => {
     const batchTimePrice = await getCryptoPrice(batch.coin);
     const analyzedBatch = {
       summary: {
+        source: batch.source,
         coin: batch.coin,
         averageScore,
         prediction,
@@ -73,7 +74,6 @@ const performSentimentAnalysis = async ({ results, ...batch }) => {
       ...batch,
       state: 'VIRGIN',
       results
- 
     };
     return analyzedBatch;
   } catch (error) {

@@ -17,9 +17,7 @@ class SentimentPredictor {
   }
 
   async loadMetadata() {
-    const sentimentMetadata =
-      await loadHostedMetadata(this.urls.metadata);
-    // ui.showMetadata(sentimentMetadata);
+    const sentimentMetadata = await loadHostedMetadata(this.urls.metadata);
     this.indexFrom = sentimentMetadata['index_from'];
     this.maxLen = sentimentMetadata['max_len'];
     console.log('indexFrom = ' + this.indexFrom);
@@ -31,7 +29,6 @@ class SentimentPredictor {
   }
 
   predict(text = '') {
-    console.log(text)
     // Convert to lower case and remove all punctuations.
     const inputText =
       text.trim().toLowerCase().replace(/(\.|\,|\!)/g, '').split(' ');

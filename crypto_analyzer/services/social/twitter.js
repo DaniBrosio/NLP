@@ -38,14 +38,6 @@ async function getTweets({ crypto, limit = 100 }) {
     return;
   }
 
-  // console.log("\ntweets:");
-
-  // tweets.forEach((tweet, index) => {
-  //   console.log(`${index + 1}) ${tweet.text}`);
-  // });
-  // console.log("\nmeta:");
-  // console.log(meta);
-
   return {
     batch: {
       coin: crypto.acronym,
