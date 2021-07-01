@@ -5,14 +5,11 @@ import { REDDIT } from '../../helpers/constants.js';
 
 dotenv.config();
 
-const delay = timeoutMs => new Promise(resolve => setTimeout(resolve, timeoutMs));
-
 async function getComments({ query, limit = 2, repliesLimit = 100, repliesDpth = 0 }) {
   const postIds = await this.client.getHot('wallstreetbets', { limit: 10 })
     .map(post => post.id);
 
   const commentsPromises = postIds.map(async id => {
-    await delay(15000);
     return this.client.getSubmission(id).expandReplies({ limit: 10, depth: 10 })
   });
   const commentsFromAllPosts = await Promise.all(commentsPromises);

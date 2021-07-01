@@ -7,6 +7,6 @@ export const appendToFile = (path = '/', articles) => {
   console.log(`exporting ${articles.length} articles...`);
   articles.map(async (article, idx) => {
     await appendContent(path, article);
-    console.log(`exported article ${idx} to output/news.md`);
+    console.log(`exported article ${idx} to ${path}`);
   });
 };

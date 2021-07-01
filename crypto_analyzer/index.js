@@ -6,6 +6,7 @@ import { ScrapingApi, DbApi } from './services/index.js';
 import SentimentPredictor from './services/sentiment/sentiment.js';
 import { DateTime } from 'luxon';
 import { getCryptoPrice } from './services/market/cryptoCompare.js';
+import cron from 'node-cron';
 
 dotenv.config();
 
@@ -34,9 +35,11 @@ const fetchServiceData = async (crypto, serviceManager) => {
   const { batch } = await serviceManager.fetchServiceData({ crypto });
 
   const analyzedBatch = await performSentimentAnalysis(batch);
-  // console.log(JSON.stringify(analyzedBatch, null, 2));
+  const { summary, coin, source, meta, state, ..._rest } = analyzedBatch || {};
+  const compressedBatch = { summary, coin, source, meta, state };
+
   try {
-    const { insertedCount } = await dbManager.insertNewBatch(analyzedBatch);
+    const { insertedCount } = await dbManager.insertNewBatch(compressedBatch);
     console.log(`inserted ${insertedCount} documents`);
   } catch (error) {
     console.error('failed inserting batch', error);
@@ -59,7 +62,7 @@ const performSentimentAnalysis = async ({ results, ...batch }) => {
         analysis: predictor.predict(result.text),
       }));
 
-    const averageScore = analyzedResults.reduce((acc, r) => acc + r.analysis.score, 0)/results.length;
+    const averageScore = analyzedResults.reduce((acc, r) => acc + r.analysis.score, 0) / results.length;
     const prediction = getPrediction(averageScore);
     const batchTimePrice = await getCryptoPrice(batch.coin);
     const analyzedBatch = {
@@ -88,16 +91,36 @@ const getServiceManager = {
   [GNEWS]: gnewsManager
 };
 
-(async () => {
-  try {
-    const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
+var coinIterator = 0;
 
-    const serviceManager = getServiceManager[args.service];
+console.log(`setting up schedule`);
+const interval = process.env.TIME_WINDOW;
+console.log("interval", interval)
+const task = cron.schedule(`*/${interval} * * * *`, async () => {
+  const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
+  for (let coinIterator = 0; coinIterator <= keywords.length; coinIterator++) {
+    console.log(`browsing opinions for ${keywords[coinIterator].name}...`);
+
+    await launch(TWITTER, keywords[coinIterator]);
+    await launch(REDDIT, keywords[coinIterator]);
+    await launch(BING, keywords[coinIterator]);
+
+    if (coinIterator >= keywords.length) coinIterator = 0;
+    await delay(10000);
+  }
+}, {
+  scheduled: true,
+  timezone: "America/Argentina/Buenos_Aires"
+});
+
+const launch = async (service, keyword) => {
+  try {
+
+    const serviceManager = getServiceManager[service];
     if (!serviceManager) throw new Error('no service specified');
 
-    fetchServiceData(keywords[args['coin-index']], serviceManager);
+    return fetchServiceData(keyword, serviceManager);
   } catch (err) {
     console.error(err);
   }
-})();
-
+}

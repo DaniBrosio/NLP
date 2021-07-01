@@ -33,6 +33,7 @@
     "luxon": "^1.27.0",
     "minimist": "^1.2.5",
     "mongodb": "^3.6.9",
+    "node-cron": "^3.0.0",
     "node-fetch": "^2.6.1",
     "present": "^1.0.0",
     "puppeteer": "^10.0.0",
