@@ -7,6 +7,7 @@ import SentimentPredictor from './services/sentiment/sentiment.js';
 import { DateTime } from 'luxon';
 import { getCryptoPrice } from './services/market/cryptoCompare.js';
 import cron from 'node-cron';
+import chalk from 'chalk';
 
 dotenv.config();
 
@@ -48,7 +49,7 @@ const fetchServiceData = async (crypto, serviceManager) => {
 
 const getPrediction = score => {
   if (score < 0.25) return 'NEGATIVE';
-  if (score < 0.75) return 'NEUTRAL';
+  if (score < 0.75 || !score) return 'NEUTRAL';
   return 'POSITIVE';
 };
 
@@ -93,20 +94,23 @@ const getServiceManager = {
 
 var coinIterator = 0;
 
-console.log(`setting up schedule`);
 const interval = process.env.TIME_WINDOW;
+console.log(`setting up schedule. interval: ${interval} minutes`);
 console.log("interval", interval)
 const task = cron.schedule(`*/${interval} * * * *`, async () => {
   const keywords = JSON.parse(await readFile(new URL('./keywords.json', import.meta.url)));
-  for (let coinIterator = 0; coinIterator <= keywords.length; coinIterator++) {
-    console.log(`browsing opinions for ${keywords[coinIterator].name}...`);
-
+  var coinIterator = 0;
+  while (coinIterator <= keywords.length) {
+    console.log(chalk.bgRed.bold(`browsing opinions for ${keywords[coinIterator].name}...`));
+    console.log(chalk.blue.bold(coinIterator))
     await launch(TWITTER, keywords[coinIterator]);
     await launch(REDDIT, keywords[coinIterator]);
     await launch(BING, keywords[coinIterator]);
+    coinIterator++;
+    console.log(chalk.blue.bold(coinIterator))
 
-    if (coinIterator >= keywords.length) coinIterator = 0;
-    await delay(10000);
+    if (coinIterator > keywords.length) coinIterator = 0;
+    // await delay(2000);
   }
 }, {
   scheduled: true,

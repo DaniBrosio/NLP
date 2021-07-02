@@ -6,9 +6,8 @@ import { getCryptoPrice } from './services/market/cryptoCompare.js';
 dotenv.config();
 
 const CRYPTOCOMPARE_API_KEY = process.env['CRYPTOCOMPARE_API_KEY'];
-// const TIME_WINDOW_MS = 30 * 60 * 1000; // 30 minutos
-// const TIME_WINDOW_MS = 10 * 60 * 1000; // 10 minutos
-const TIME_WINDOW_MS = process.env.TIME_WINDOW * 1000; // 20 segundos
+const TIME_WINDOW_MS = process.env.TIME_WINDOW * 60 * 1000; // N minutos
+// const TIME_WINDOW_MS = process.env.TIME_WINDOW * 1000; // N segundos
 const dbManager = new MongodbManager();
 
 const onUpdate = ({ fullDocument: { _id, state, summary } = {} }) => {

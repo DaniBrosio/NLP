@@ -7,13 +7,15 @@ dotenv.config();
 const { MongoClient } = MongoDB;
 
 async function insertNewBatch(batch) {
-  await this.client.connect();
+  await this.connection;
   return this.client.db("sentiment-analysis").collection("batches").insertOne(batch);
 };
 
 function MongodbManager() {
   const uri = process.env.MONGO_DB_URI;
-  this.client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  this.client = client;
+  this.connection = client.connect();
 }
 
 MongodbManager.prototype.insertNewBatch = insertNewBatch;
