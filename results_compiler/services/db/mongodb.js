@@ -8,7 +8,7 @@ const { MongoClient } = MongoDB;
 
 async function getAvailableResults(coin) {
   await this.connection;
-  return this.client.db("sentiment-analysis").collection("results").find({ state: 'VIRGIN', coin });
+  return this.client.db("sentiment-analysis").collection("results").find({ state: 'VIRGIN', coin, source: {$ne : null}});
 }
 
 async function setResultState(_id, newState) {
