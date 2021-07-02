@@ -6,9 +6,9 @@ dotenv.config();
 
 const { MongoClient } = MongoDB;
 
-async function getAvailableResults() {
+async function getAvailableResults(coin) {
   await this.connection;
-  return this.client.db("sentiment-analysis").collection("results").find({ state: 'VIRGIN' });
+  return this.client.db("sentiment-analysis").collection("results").find({ state: 'VIRGIN', coin });
 }
 
 async function setResultState(_id, newState) {
